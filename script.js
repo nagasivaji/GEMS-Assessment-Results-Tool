@@ -18,9 +18,14 @@ var excelBook;
 var excelSheets;
 var excelSheetNo = 0;
 
-// varibale to strore headings of the selected sheet
+// array to strore headings of the selected sheet
 var headings = [];
 
+// array to strore pass marks for different subjects
+var passMarks = [];
+
+// array to strore students data
+var students = [];
 
 
 
@@ -39,6 +44,9 @@ function processExcelFile() {
 
     // Hiding File input area
     document.getElementById("fileInputArea").style.display = "none";
+    
+    //showing backbtn on navigationbar
+    document.getElementById("navBarBackBtn").style.display = "block";
 
     try {
         if (checkExcelOrNot()) {
@@ -151,21 +159,62 @@ function showSubjects(){
     // getting data from required sheet in excel file
     var sheetData = getSheetData();
     
-    // getting headings 
-    h
+    // getting headings  and creating input fields for different subjects
+    headings  = [];
+    var temp = ``;
     for(var i=0; i<sheetData[0].length; i++){
-
+        if(i<3)
+            headings.push(sheetData[0][i]);
+        else{
+            if(i%2 == 1){
+                headings.push(sheetData[0][i]);
+                temp += `
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">MARKS</span>
+                            <input type="number" class="form-control inputMarksForSubject" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" min="0" max="100" placeholder="${sheetData[0][i]}">
+                        </div>` ;
+            }
+        }
     }
+
+    temp += `<button class="btn btn-dark" id="claculateBtn">Calculate</button>`;
+    // Appending inputs to subject area
+    document.getElementById('subjectsArea').innerHTML = temp;
+
+    //Calculate
+    const claculateBtn = document.getElementById('claculateBtn');
+    claculateBtn.addEventListener("click", () => {
+        getPassMarks();
+    });
 }
+
+
+// Getting pass marks from subjects input area
+function getPassMarks() {
+    passMarks= [];
+    var temp = document.getElementsByClassName("inputMarksForSubject");
+    for(var i=0; i<temp.length; i++) {
+        //console.log(Number(temp[i].value));
+        passMarks.push(Number(temp[i].value));
+    }
+    //console.log(passMarks);
+
+    getStudents();
+}
+
+
+// Students class
+
+
+function getStudents(){}
+
+
+
 
 
 
 /*
 
-        //
-        // Based on sheet name reading the data present in sheet into json array format
-        //
-        //console.log(excelSheets.length);
-        //Show dropdown sheets and input marks for each subject
+        
 
 */

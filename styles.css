@@ -29,11 +29,15 @@ body {
     display: flex;
 }
 
+._navBar ._logo div a {
+    text-decoration: none;
+}
+
 ._navBar ._logo div img {
     width: 200px;
 }
 
-._navBar ._logo div span {
+._navBar ._logo div a span {
     margin-top: 10px;
     font-size: 40px;
     margin-right: 10px;
@@ -128,7 +132,7 @@ body {
 ._sheetInputArea p {
     font-size: 18px;
     font-weight: bold;
-    margin-left: -40%;
+    /* margin-left: -40%; */
 }
 
 ._sheetInputArea select {

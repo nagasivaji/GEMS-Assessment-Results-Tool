@@ -1,0 +1,98 @@
+/*
+    Orange  : FF7517
+    Gray    : 3E3939
+    Black   : 2C2727
+    White   : F6F4F4
+
+*/
+
+
+/* body {
+    font-family: Ubuntu;
+}
+
+._navBar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 100px;
+    box-shadow: 2px 2px 4px gray;
+}
+
+._navBar ._logo {
+    display: flex;
+}
+
+._navBar ._logo div img {
+    width: 200px;
+}
+
+._navBar ._logo div span {
+    margin-top: 10px;
+    font-size: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #3E3939;
+    display: none;
+}
+
+._navBar ._title p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3E3939;
+}
+
+._navBar ._title p span {
+    font-size: 30px;
+    color: #FF7517;
+    letter-spacing: 1px;
+}
+
+._fileInputArea {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+}
+
+._fileInputArea div {
+    width: 50%;
+
+border-radius: 6px;
+outline: 1.5px solid #3E3939;
+
+}
+._fileInputArea div input {
+    outline: none;
+    border: none;
+    color: #3E3939;
+}
+._fileInputArea div button {
+    outline: none;
+    border: none;
+    border-left: 1px solid black;
+    background-color: #3E3939;
+    color: #ffffff;
+}
+._fileInputArea div button:hover {
+    background-color: #FF7517;
+}
+._errorArea {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgb(255, 67, 67);
+    font-size: 25px;
+    font-weight: bold;
+    display: none;
+}
+*/

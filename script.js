@@ -30,10 +30,10 @@ var students = [];
 
 
 // Getting data in required sheet from excel file
-function getSheetData(){
+function getSheetData() {
     // console.log(excelSheetNo);
     // console.log(excelSheets[excelSheetNo]);
-    var sheetData =  XLSX.utils.sheet_to_json(excelBook.Sheets[excelSheets[excelSheetNo]], { header: 1 });
+    var sheetData = XLSX.utils.sheet_to_json(excelBook.Sheets[excelSheets[excelSheetNo]], { header: 1 });
     return sheetData;
 }
 
@@ -44,7 +44,7 @@ function processExcelFile() {
 
     // Hiding File input area
     document.getElementById("fileInputArea").style.display = "none";
-    
+
     //showing backbtn on navigationbar
     document.getElementById("navBarBackBtn").style.display = "block";
 
@@ -94,7 +94,7 @@ function checkExcelOrNot() {
 
 
 // reading excel file
-function readExcelFile(){
+function readExcelFile() {
 
     // Creating reader for excel file
     var reader = new FileReader();
@@ -104,7 +104,7 @@ function readExcelFile(){
 
     // ````````Anonymous function````````
     // after reading full file invoking an anonymous function for fetching data from excel file
-    reader.onload = (event)=>{
+    reader.onload = (event) => {
 
         // Storing reader reasult into a variable in array format
         var excelResult = new Uint8Array(reader.result);
@@ -123,18 +123,18 @@ function readExcelFile(){
 
 
 // Display dropdown for selection os sheets
-function showSheetsDropdown(sheets){
+function showSheetsDropdown(sheets) {
 
     // Hiding File input area
     document.getElementById("fileInputArea").style.display = "none";
 
     // Creating dropdown for selection
     const sheetInputArea = document.getElementById("sheetInputArea");
-    var  temp = `<p>Select Sheet:</p><select id="selectSheet" class="form-select" aria-label="Default select example">`;
-    for(var i=0; i<sheets.length; i++){
-        temp += `<option value="${i}">${i+1}:${sheets[i]}</option>`;
+    var temp = `<p>Select Sheet:</p><select id="selectSheet" class="form-select" aria-label="Default select example">`;
+    for (var i = 0; i < sheets.length; i++) {
+        temp += `<option value="${i}">${i + 1}:${sheets[i]}</option>`;
     }
-    temp += `</select>`; 
+    temp += `</select>`;
     // assigning dropdown to select dropdown area
     sheetInputArea.innerHTML = temp;
 
@@ -155,19 +155,19 @@ function showSheetsDropdown(sheets){
 
 
 // Display inputs to senter passmarks for each subject
-function showSubjects(){
+function showSubjects() {
     // getting data from required sheet in excel file
     var sheetData = getSheetData();
-    
+
     // getting headings  and creating input fields for different subjects
     // creating new headings for different subjects
-    headings  = [];
+    headings = [];
     var temp = ``;
-    for(var i=0; i<sheetData[0].length; i++){
-        if(i<3)
+    for (var i = 0; i < sheetData[0].length; i++) {
+        if (i < 3)
             headings.push(sheetData[0][i]);
-        else{
-            if(i%2 == 1){
+        else {
+            if (i % 2 == 1) {
                 headings.push(sheetData[0][i]);
                 temp += `
                         <div class="input-group mb-3">
@@ -195,9 +195,9 @@ function showSubjects(){
 // Getting pass marks from subjects input area
 function getPassMarks() {
     // creating new array for passing marks
-    passMarks= [];
+    passMarks = [];
     var temp = document.getElementsByClassName("inputMarksForSubject");
-    for(var i=0; i<temp.length; i++) {
+    for (var i = 0; i < temp.length; i++) {
         //console.log(Number(temp[i].value));
         passMarks.push(Number(temp[i].value));
     }
@@ -207,33 +207,37 @@ function getPassMarks() {
 
 
 // Students class
-class Student{
+class Student {
     studentId;
     studentName;
     studentEmail;
     studentMarks;
     objectiveStatus;
     subjectiveStatus;
+    finalStatus;
+    finalMarks;
 
-    constructor(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus) {
+    constructor(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks) {
         this.studentId = studentId;
-        this.studentName = studentName; 
+        this.studentName = studentName;
         this.studentEmail = studentEmail;
-        this.studentMarks =  studentMarks;
-        this.objectiveStatus =  objectiveStatus;
-        this.subjectiveStatus =  subjectiveStatus;
+        this.studentMarks = studentMarks;
+        this.objectiveStatus = objectiveStatus;
+        this.subjectiveStatus = subjectiveStatus;
+        this.finalStatus = finalStatus;
+        this.finalMarks = finalMarks;
     }
 }
 
 // Subjects class
-class Subject{
+class Subject {
     subjectName;
     subjectMarks;
     subjectPassMark;
     subjectAttempts;
     subjectStatus;
 
-    constructor(subjectName, subjectMarks,subjectPassMark, subjectAttempts, subjectStatus) {
+    constructor(subjectName, subjectMarks, subjectPassMark, subjectAttempts, subjectStatus) {
         this.subjectName = subjectName;
         this.subjectMarks = subjectMarks;
         this.subjectPassMark = subjectPassMark;
@@ -244,7 +248,7 @@ class Subject{
 
 
 
-function getStudentsObjects(){
+function getStudentsObjects() {
 
     // creating new students array
     students = [];
@@ -255,14 +259,13 @@ function getStudentsObjects(){
 
     // getting noOfRows and noOfColumns in excel file sheet
     const noOfRows = sheetData.length;
-    const noOfCols = sheetData[0].length; 
+    const noOfCols = sheetData[0].length;
 
     // Iterating from second row since first row contains headings
     // For each students...
-    for(var i = 1; i < noOfRows; i++)
-    {
+    for (var i = 1; i < noOfRows; i++) {
         // Creating required variables which will be used while creating objects
-        var studentId, studentName, studentEmail; 
+        var studentId, studentName, studentEmail;
         var subjectName, subjectMarks, subjectAttempts, subjectStatus;
         var studentMarks = [];
 
@@ -271,12 +274,12 @@ function getStudentsObjects(){
         // temp variable is indexing variable for headings array
         var temp2 = 0;
 
-        for(var j = 0; j < noOfCols; j++){
-            if(j==0)        // col:1 - studens id 
+        for (var j = 0; j < noOfCols; j++) {
+            if (j == 0)        // col:1 - studens id 
                 studentId = sheetData[i][j];
-            else if(j==1)   // col:2  - student name
+            else if (j == 1)   // col:2  - student name
                 studentName = sheetData[i][j];
-            else if(j==2)   // col:3  - student email
+            else if (j == 2)   // col:3  - student email
                 studentEmail = sheetData[i][j];
             else            // col:3 to ...  - subjects
             {
@@ -289,76 +292,123 @@ function getStudentsObjects(){
                 subjectStatus = validate(subjectMarks, subjectAttempts, passMarks[temp2]);
 
                 // creating new subject object for the student
-                var obj = new Subject(subjectName, subjectMarks,passMarks[temp2++], subjectAttempts, subjectStatus);
+                var obj = new Subject(subjectName, subjectMarks, passMarks[temp2++], subjectAttempts, subjectStatus);
 
                 // pushing the new subject into student marks
                 studentMarks.push(obj);
             }
         }
 
-        // urequired varibale for students status
-        var  objectiveStatus= "PASS", subjectiveStatus="PASS";
+        // required varibale for students status
+        var objectiveStatus = "PASS", subjectiveStatus = "PASS";
 
         // Iterating through  students sbjets array
-        for(var k=0;k<studentMarks.length;k++){
+        for (var k = 0; k < studentMarks.length; k++) {
 
             // getting subject object
             var subject = studentMarks[k];
 
             // if its a last column then its subjective type
-            if(k == studentMarks.length-1){
-                if(subject.subjectStatus == 'FAIL'){
+            if (k == studentMarks.length - 1) {
+                if (subject.subjectStatus == 'FAIL') {
                     subjectiveStatus = "FAIL";
                     break;
                 }
-                
-                if(subject.subjectStatus == 'PENDING'){
+
+                if (subject.subjectStatus == 'PENDING') {
                     subjectiveStatus = "PENDING";
                 }
 
-                if(subject.subjectStatus == 'NA'){
+                if (subject.subjectStatus == 'NA') {
                     subjectiveStatus = "NOT APPEARED";
                 }
 
-            }   
+            }
             else    // if its not a last column then its objective type
             {
-                if(subject.subjectStatus == 'FAIL'){
+                if (subject.subjectStatus == 'FAIL') {
                     objectiveStatus = "FAIL";
                     break;
                 }
-                
-                if(subject.subjectStatus == 'PENDING'){
+
+                if (subject.subjectStatus == 'PENDING') {
                     objectiveStatus = "PENDING";
                 }
 
-                if(subject.subjectStatus == 'NA'){
+                if (subject.subjectStatus == 'NA') {
                     objectiveStatus = "NOT APPEARED";
                 }
-                
+
             }
         }
 
 
+        // Conditions for finalstatus and sinal marks
+        // required varibale for students status
+        var finalStatus, finalMarks;
+
+        // Condtion for student to FAIL
+        if (objectiveStatus == 'FAIL' || subjectiveStatus == 'FAIL') {
+            finalStatus = 'FAILED';
+            finalMarks = '--';
+        }
+        // Condtion for student to NOT APPEARED
+        else if (objectiveStatus == 'NOT APPEARED' || subjectiveStatus == 'NOT APPEARED') {
+            finalStatus = 'NOT APPEARED';
+            finalMarks = '--';
+        }
+        // Condtion for student to PENDING
+        else if (objectiveStatus == 'PENDING' || subjectiveStatus == 'PENDING') {
+            finalStatus = 'PENDING';
+            finalMarks = '--';
+        }
+        // Conditions for student to PASS
+        else {
+
+            finalStatus = 'PASS';
+            var objMarks = 0, subMarks = 0;
+
+            // Iterating through  students sbjets array
+            for (var k = 0; k < studentMarks.length; k++) {
+
+                // getting subject object
+                var subject = studentMarks[k];
+
+                // then its subjective
+                if (k == studentMarks.length - 1) {
+                    subMarks = subject.subjectMarks;
+                }
+                else // then its objective
+                {
+                    objMarks += subject.subjectMarks;
+                }
+            }
+
+            finalMarks = ((objMarks / (studentMarks.length - 1)) + (subMarks)) / 2;
+        }
+
+
+
+
         // creating new studemt object
-        var obj = new Student(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus);
+        var obj = new Student(studentId, studentName, studentEmail, studentMarks, objectiveStatus, subjectiveStatus, finalStatus, finalMarks);
 
         // pushing the new student object to the list of students
         students.push(obj);
     }
-    //console.log(students);
+    console.log(students);
 }
 
 
 // Marks validation table
-function validate(marks, attempts, criteria){
-    if(marks >= criteria && attempts <= 3){
+function validate(marks, attempts, criteria) {
+    if (marks >= criteria && attempts <= 3) {
         return "PASS";
     }
-    else if(marks < criteria && attempts<3){
+    else if (marks < criteria && attempts < 3) {
         return "PENDING";
     }
-    else if(marks < criteria && attempts == 3)
+    else if (marks < criteria && attempts == 3)
         return "FAIL";
     else
         return "NA";
@@ -366,10 +416,21 @@ function validate(marks, attempts, criteria){
 
 
 // preparing html tbale
-function prepareHTMLTable(){
+function prepareHTMLTable() {
     // Hiding sheetarea -  dropdown and  subjects input area - passmarks inputs
     document.getElementById("subjectsArea").style.display = "none";
     document.getElementById("sheetInputArea").style.display = "none";
+
+    // creating HTML table based on the result of students data
+
+    // Table start
+    //var tableStart = `<table class="table table-hover" id="result_table">`;
+
+    // table Headings
+    // var tableHeadings = `<tr>`;
+    // for (var i = 0; i < headings.length; i++) {
+    //     tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
+    // }
 }
 
 

@@ -6,7 +6,7 @@ const excelFile = document.getElementById('excelFile');
 
 
 // Adding event Listener to handle click evenr
-processFileBtn.addEventListener("click", () =>{
+processFileBtn.addEventListener("click", () => {
     processExcelFile();
 });
 
@@ -16,13 +16,15 @@ processFileBtn.addEventListener("click", () =>{
 
 
 
-function processExcelFile(){
+function processExcelFile() {
     //console.log("Processing");
 
     try {
-        if(checkExcelOrNot()){
+        if (checkExcelOrNot()) {
+            // If input is excel file
             console.log("Correct File...");
-        }else{
+        } else {
+            // If file is not an excel file
             console.log("Wrong File...");
             const errorArea = document.getElementById("errorArea");
             errorArea.style.display = 'block';
@@ -32,6 +34,7 @@ function processExcelFile(){
             }, 2000);
         }
     } catch (e) {
+        // If file input in empty
         const errorArea = document.getElementById("errorArea");
         errorArea.style.display = 'block';
         errorArea.innerHTML = "<p>No file Choosen</p>";
@@ -39,7 +42,7 @@ function processExcelFile(){
             location.reload();
         }, 2000);
     }
-    
+
 }
 
 
@@ -48,8 +51,8 @@ function processExcelFile(){
 function checkExcelOrNot() {
 
     if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-excel'
-        ].includes(excelFile.files[0].type)) {
+        'application/vnd.ms-excel'
+    ].includes(excelFile.files[0].type)) {
 
         //excelFile.value = '';
 

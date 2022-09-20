@@ -6,8 +6,7 @@
 
 */
 
-
-/* body {
+body {
     font-family: Ubuntu;
 }
 
@@ -49,6 +48,8 @@
     letter-spacing: 1px;
 }
 
+
+/*
 ._fileInputArea {
     width: 100%;
     height: 100px;
@@ -62,16 +63,16 @@
 
 ._fileInputArea div {
     width: 50%;
-
-border-radius: 6px;
-outline: 1.5px solid #3E3939;
-
+    border-radius: 6px;
+    outline: 1.5px solid #3E3939;
 }
+
 ._fileInputArea div input {
     outline: none;
     border: none;
     color: #3E3939;
 }
+
 ._fileInputArea div button {
     outline: none;
     border: none;
@@ -79,9 +80,11 @@ outline: 1.5px solid #3E3939;
     background-color: #3E3939;
     color: #ffffff;
 }
+
 ._fileInputArea div button:hover {
     background-color: #FF7517;
 }
+
 ._errorArea {
     width: 100%;
     height: 100px;
@@ -95,4 +98,5 @@ outline: 1.5px solid #3E3939;
     font-weight: bold;
     display: none;
 }
+
 */

@@ -60,6 +60,7 @@ body {
 ._fileInputArea {
     width: 100%;
     height: 100px;
+    padding: 5px 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -98,6 +99,7 @@ body {
 ._errorArea {
     width: 100%;
     height: 100px;
+    padding: 5px 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,4 +109,42 @@ body {
     font-size: 25px;
     font-weight: bold;
     display: none;
+}
+
+
+/* SHEET INPUT AREA */
+
+._sheetInputArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 40px;
+}
+
+._sheetInputArea p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: -40%;
+}
+
+._sheetInputArea select {
+    width: 50%;
+}
+
+._subjectsArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+._subjectsArea div {
+    width: 50%;
 }

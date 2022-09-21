@@ -175,7 +175,7 @@ body {
     text-align: center;
     margin-top: 20px;
     font-size: 13px;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 
 ._htmlTableArea table {
@@ -211,6 +211,101 @@ body {
 }
 
 ._htmlTableArea table tr td {
+    font-size: 13px;
+    /* font-weight: bold; */
+    color: #000000;
+}
+
+
+/* SEARCH AREA */
+
+._searchInputArea {
+    width: 100%;
+    padding: 5px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    display: none;
+    margin-top: 30px;
+}
+
+._searchInputArea select {
+    width: 20%;
+    margin-top: -10px;
+    margin-right: 10px;
+}
+
+._searchInputArea div {
+    width: 30%;
+    margin-top: 3px;
+}
+
+._searchInputArea div span {
+    cursor: pointer;
+}
+
+._searchInputArea p {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+._searchInputArea span {
+    margin-left: 5px;
+}
+
+
+/* HTML SEARCH RESULT TBALE  */
+
+._searchResultArea {
+    padding: 50px 50px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    /* overflow: scroll; */
+}
+
+._searchResultArea p {
+    font-size: 30px;
+}
+
+._searchResultArea table {
+    font-size: 13px;
+}
+
+._searchResultArea table th {
+    background-color: black;
+    color: white;
+    font-weight: lighter;
+    font-size: 13px;
+}
+
+
+/* ._htmlTableArea table tr th:hover {
+    color: #FF7517;
+} */
+
+._searchResultArea table .passRow {
+    background-color: #3CCF4E;
+}
+
+._searchResultArea table .failRow {
+    background-color: #FF1E00;
+}
+
+._searchResultArea table .pendingRow {
+    background-color: #FFDE00;
+}
+
+._searchResultArea table .notAppearedRow {
+    background-color: #8758FF;
+}
+
+._searchResultArea table tr td {
     font-size: 13px;
     /* font-weight: bold; */
     color: #000000;

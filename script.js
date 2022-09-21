@@ -187,7 +187,8 @@ function showSubjects() {
     claculateBtn.addEventListener("click", () => {
         getPassMarks();
         getStudentsObjects();
-        prepareHTMLTable();
+        prepareHTMLTable(students);
+        showSearchArea();
     });
 }
 
@@ -426,7 +427,7 @@ function prepareHTMLTable() {
     
     //creating HTML table based on the result of students data
     //Table start
-    var tableStart = `<table class="table table-hover" id="htmlResultTable">`;
+    var tableStart = `<table class="table" id="htmlResultTable">`;
 
 
 
@@ -511,14 +512,214 @@ function prepareHTMLTable() {
     // table end
     var tableEnd = `</table>`;
 
+    // download Button 
+    var downloadButton = '<button class="btn btn-dark" id="downloadExcel">Get Excel</button>';
 
     // Adding table to HTML page
-    document.getElementById("htmlTableArea").innerHTML = tableStart + tableHeadings + tableRows + tableEnd;
-    
+    document.getElementById("htmlTableArea").innerHTML = tableStart + tableHeadings + tableRows + tableEnd + downloadButton;
+    document.getElementById("htmlTableArea").style.overflow = 'scroll';
+
+
+    // Downloading excelfile using event listner
+    document.getElementById("downloadExcel").addEventListener("click", function(){
+        downloadExcelFile();
+    });
+
 }
 
 
 
+// Show serch Area
+function showSearchArea(){
+    // showing serch input area
+    document.getElementById("searchInputhArea").style.display = 'flex';
+
+    // variable for type of search
+    var serchField = 1;
+
+    // Accessing serch selection
+    const searchSelection = document.getElementById("searchSelection");
+
+    // Adding event handlers to select serch type
+    searchSelection.addEventListener("change", () => {
+        serchField = searchSelection.value;
+        //console.log(serchField);
+    });
+
+    // Accessing serch value
+    const searchInput = document.getElementById("searchInput");
+
+    // serch data
+    var searchData = '';
+
+    // Adding event handler to serch value
+    searchInput.addEventListener("input", () => {
+        searchData = searchInput.value;
+        sortStudentData(serchField, searchData);
+    });
+
+    // Accessing serch btn
+    const serchBtn = document.getElementById("serchBtn");
+
+    // adding event handler to serch btn
+    serchBtn.addEventListener("click", () => {
+        sortStudentData(serchField, searchData.toLowerCase());
+    });
+
+    
+}
+
+// Sorting students data to show in serch result
+function sortStudentData(field, data){
+    if(data === '')
+        prepareHTMLSerchTable([]);
+
+    var tempStudents = [];
+    for(var i=0; i<students.length; i++){
+        if(field == 1){
+            var tempData = students[i].studentId;
+            if(tempData == data)
+                tempStudents.push(students[i]);
+        }
+        else if(field == 2){
+            var tempData = students[i].studentName.toLowerCase();
+            if(tempData.includes(data))
+                tempStudents.push(students[i]);
+        }
+        else{
+            var tempData = students[i].studentEmail.toLowerCase();
+            if(tempData.includes(data))
+                tempStudents.push(students[i]);
+        }
+    }
+
+    //console.log(tempStudents);
+    prepareHTMLSerchTable(tempStudents);
+}
+
+
+// preparing html tbale for serch result
+function prepareHTMLSerchTable(serchStudents) {
+    //console.log(serchStudents);
+    //creating HTML table based on the result of students data
+    //Table start
+    var tableDivHeading = '<p>Serch Result:</p>';
+    var tableStart = `<table class="table" id="htmlSearchTable">`;
+
+
+
+    //table Headings -> id, name, mail, subjects...
+    // Openinig row
+    var tableHeadings = `<tr>`;
+    for (var i = 0; i < headings.length; i++) {
+        if(i<3)
+            tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
+        else
+            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i-3]}</th>`;
+    }
+    
+    // Objective status
+    tableHeadings = tableHeadings + `<th>Objective Status</th>`;
+    // Subjective status
+    tableHeadings = tableHeadings + `<th>Subjective Status</th>`;
+    // Final status
+    tableHeadings = tableHeadings + `<th>Final Status</th>`;
+    // Finak Marks
+    tableHeadings = tableHeadings + `<th>Final Marks</th>`;
+    // Closing row
+    tableHeadings = tableHeadings + `</tr>`;
+
+
+
+    //console.log(students);
+    // table rows 
+    // All students data
+    var tableRows = ``;
+    for(var i=0; i<serchStudents.length; i++){
+        // creating row tag based on status of the student
+        var tempRow = ``;
+        if(serchStudents[i].finalStatus === 'PASS')
+            tempRow = tempRow + `<tr class="passRow">`;
+        else if(serchStudents[i].finalStatus === 'FAILED')
+            tempRow = tempRow + `<tr class="failRow">`;
+        else if(serchStudents[i].finalStatus === 'PENDING')
+            tempRow = tempRow + `<tr class="pendingRow">`;
+        else
+            tempRow = tempRow + `<tr class="notAppearedRow">`;
+
+
+        // creating col tags for student data
+        // 1.Student ID
+        tempRow = tempRow + `<td>${serchStudents[i].studentId}</td>`;
+        // 2.Student Name
+        tempRow = tempRow + `<td>${serchStudents[i].studentName}</td>`;
+        // 3.Student Email
+        tempRow = tempRow + `<td>${serchStudents[i].studentEmail}</td>`;
+
+        // 4.Student marks and attempts for each Subject (Adding dynamically through looping subjects array from student object)
+        for(var j=0; j<serchStudents[i].studentMarks.length; j++){
+            tempRow = tempRow + `<td>
+                                    ${serchStudents[i].studentMarks[j].subjectMarks}
+                                    -
+                                    ${serchStudents[i].studentMarks[j].subjectAttempts}
+                                </td>`;
+        }
+
+        // 5.Student Objective Status
+        tempRow = tempRow + `<td>${serchStudents[i].objectiveStatus}</td>`;
+
+        // 6.Student Subjective Status
+        tempRow = tempRow + `<td>${serchStudents[i].subjectiveStatus}</td>`;
+
+        // 7.Student Final Status
+        tempRow = tempRow + `<td>${serchStudents[i].finalStatus}</td>`;
+
+        // 7.Student Final Marks
+        tempRow = tempRow + `<td>${serchStudents[i].finalMarks}</td>`;
+
+        // closing row tag
+        tempRow = tempRow + '</tr>';
+
+
+        // Adding each temporary student row to table rows string 
+        tableRows = tableRows + tempRow;
+    }
+
+
+    // table end
+    var tableEnd = `</table>`;
+
+    if(serchStudents.length <= 0 || serchStudents.length == students.length) {
+        // Adding table to HTML page
+        document.getElementById("searchResultArea").style.display = "none";
+    }
+    else{
+        // Adding table to HTML page
+        document.getElementById("searchResultArea").style.display = "block";
+        document.getElementById("searchResultArea").innerHTML = tableDivHeading + tableStart + tableHeadings + tableRows + tableEnd;
+        document.getElementById("searchResultArea").style.overflow = 'scroll';
+    }
+    
+}
+
+
+// Downloading excelfile
+function downloadExcelFile(){
+    
+    function html_table_to_excel(type) {
+        var data = document.getElementById('htmlResultTable');
+
+        var file = XLSX.utils.table_to_book(data, { sheet: "sheet1" });
+        XLSX.write(file, { bookType: type, bookSST: true, type: 'base64' });
+        XLSX.writeFile(file, 'Exco Result.' + type);
+
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+
+    html_table_to_excel('xlsx');
+}
 
 /*
 

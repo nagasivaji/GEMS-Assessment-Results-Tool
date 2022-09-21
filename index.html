@@ -62,9 +62,26 @@
         -->
     </div>
 
-    <div class="_htmlTableArea" id="htmlTableArea">
-
+    <!-- Search Input Area -->
+    <div class="_searchInputArea" id="searchInputhArea">
+        <p>Serch Students:</p>
+        <select class="form-select" aria-label="Default select example" id="searchSelection">
+            <option value="1">Student ID</option>
+            <option value="2">Student Name</option>
+            <option value="3">Student Email</option>
+        </select>
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Type..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <span class="input-group-text" id="serchBtn">Search</span>
+        </div>
     </div>
+
+    <!-- Serch Result Area -->
+    <div class="_searchResultArea" id="searchResultArea"></div>
+
+    <!-- FINAL HTML RESULT TABLE -->
+    <div class="_htmlTableArea" id="htmlTableArea"></div>
+
 
 
 </body>

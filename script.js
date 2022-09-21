@@ -385,6 +385,7 @@ function getStudentsObjects() {
             }
 
             finalMarks = ((objMarks / (studentMarks.length - 1)) + (subMarks)) / 2;
+            finalMarks = Math.round(finalMarks);
         }
 
 
@@ -396,7 +397,7 @@ function getStudentsObjects() {
         // pushing the new student object to the list of students
         students.push(obj);
     }
-    console.log(students);
+    //console.log(students);
 }
 
 
@@ -417,20 +418,103 @@ function validate(marks, attempts, criteria) {
 
 // preparing html tbale
 function prepareHTMLTable() {
+
     // Hiding sheetarea -  dropdown and  subjects input area - passmarks inputs
     document.getElementById("subjectsArea").style.display = "none";
     document.getElementById("sheetInputArea").style.display = "none";
 
-    // creating HTML table based on the result of students data
+    
+    //creating HTML table based on the result of students data
+    //Table start
+    var tableStart = `<table class="table table-hover" id="htmlResultTable">`;
 
-    // Table start
-    //var tableStart = `<table class="table table-hover" id="result_table">`;
 
-    // table Headings
-    // var tableHeadings = `<tr>`;
-    // for (var i = 0; i < headings.length; i++) {
-    //     tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
-    // }
+
+    //table Headings -> id, name, mail, subjects...
+    // Openinig row
+    var tableHeadings = `<tr>`;
+    for (var i = 0; i < headings.length; i++) {
+        if(i<3)
+            tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
+        else
+            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i-3]}</th>`;
+    }
+    
+    // Objective status
+    tableHeadings = tableHeadings + `<th>Objective Status</th>`;
+    // Subjective status
+    tableHeadings = tableHeadings + `<th>Subjective Status</th>`;
+    // Final status
+    tableHeadings = tableHeadings + `<th>Final Status</th>`;
+    // Finak Marks
+    tableHeadings = tableHeadings + `<th>Final Marks</th>`;
+    // Closing row
+    tableHeadings = tableHeadings + `</tr>`;
+
+
+
+    //console.log(students);
+    // table rows 
+    // All students data
+    var tableRows = ``;
+    for(var i=0; i<students.length; i++){
+        // creating row tag based on status of the student
+        var tempRow = ``;
+        if(students[i].finalStatus === 'PASS')
+            tempRow = tempRow + `<tr class="passRow">`;
+        else if(students[i].finalStatus === 'FAILED')
+            tempRow = tempRow + `<tr class="failRow">`;
+        else if(students[i].finalStatus === 'PENDING')
+            tempRow = tempRow + `<tr class="pendingRow">`;
+        else
+            tempRow = tempRow + `<tr class="notAppearedRow">`;
+
+
+        // creating col tags for student data
+        // 1.Student ID
+        tempRow = tempRow + `<td>${students[i].studentId}</td>`;
+        // 2.Student Name
+        tempRow = tempRow + `<td>${students[i].studentName}</td>`;
+        // 3.Student Email
+        tempRow = tempRow + `<td>${students[i].studentEmail}</td>`;
+
+        // 4.Student marks and attempts for each Subject (Adding dynamically through looping subjects array from student object)
+        for(var j=0; j<students[i].studentMarks.length; j++){
+            tempRow = tempRow + `<td>
+                                    ${students[i].studentMarks[j].subjectMarks}
+                                    -
+                                    ${students[i].studentMarks[j].subjectAttempts}
+                                </td>`;
+        }
+
+        // 5.Student Objective Status
+        tempRow = tempRow + `<td>${students[i].objectiveStatus}</td>`;
+
+        // 6.Student Subjective Status
+        tempRow = tempRow + `<td>${students[i].subjectiveStatus}</td>`;
+
+        // 7.Student Final Status
+        tempRow = tempRow + `<td>${students[i].finalStatus}</td>`;
+
+        // 7.Student Final Marks
+        tempRow = tempRow + `<td>${students[i].finalMarks}</td>`;
+
+        // closing row tag
+        tempRow = tempRow + '</tr>';
+
+
+        // Adding each temporary student row to table rows string 
+        tableRows = tableRows + tempRow;
+    }
+
+
+    // table end
+    var tableEnd = `</table>`;
+
+
+    // Adding table to HTML page
+    document.getElementById("htmlTableArea").innerHTML = tableStart + tableHeadings + tableRows + tableEnd;
+    
 }
 
 

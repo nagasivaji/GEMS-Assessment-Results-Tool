@@ -27,6 +27,9 @@ var passMarks = [];
 // array to strore students data
 var students = [];
 
+// Assessments index array
+var indexes = [];
+
 
 
 // Getting data in required sheet from excel file
@@ -142,12 +145,18 @@ function showSheetsDropdown(sheets) {
     // Accessing dropdown selection
     const selectSheet = document.getElementById("selectSheet");
 
+
+    //getting required indexes for assessments columns
+    searchIndex();
     //calling show Subjects
     showSubjects();
 
     // Adding event Listener to select sheet dropdown
     selectSheet.addEventListener("change", () => {
         excelSheetNo = selectSheet.value;
+        // getting required indexes for assessments columns
+        searchIndex();
+        // Showing subjects list
         showSubjects();
     });
 }
@@ -159,28 +168,34 @@ function showSubjects() {
     // getting data from required sheet in excel file
     var sheetData = getSheetData();
 
+
     // getting headings  and creating input fields for different subjects
     // creating new headings for different subjects
     headings = [];
     var temp = ``;
-    for (var i = 0; i < sheetData[0].length; i++) {
+
+    for (var i = 0; i < sheetData[1].length; i++) {
         if (i < 3)
             headings.push(sheetData[0][i]);
         else {
-            if (i % 2 == 1) {
-                headings.push(sheetData[0][i]);
+            if (i >= indexes[0] && i < indexes[1]) {
+                headings.push(sheetData[1][i]);
                 temp += `
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="inputGroup-sizing-default">MARKS</span>
-                            <input type="number" class="form-control inputMarksForSubject" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" min="0" max="100" placeholder="${sheetData[0][i]}">
+                            <input type="number" class="form-control inputMarksForSubject" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" min="0" max="100" placeholder="${sheetData[1][i]}">
                         </div>` ;
+                i++;
             }
+
         }
     }
 
     temp += `<button class="btn btn-dark" id="claculateBtn">Calculate</button>`;
     // Appending inputs to subject area
     document.getElementById('subjectsArea').innerHTML = temp;
+
+    //console.log(headings);
 
     //Calculate
     const claculateBtn = document.getElementById('claculateBtn');
@@ -190,6 +205,41 @@ function showSubjects() {
         prepareHTMLTable(students);
         showSearchArea();
     });
+}
+
+
+
+// geting indexes for assessments columns
+function searchIndex() {
+    const data = getSheetData();
+    indexes = [];
+    var flag = 0;
+    var startIndex;
+    var endIndex;
+
+    //console.log(tempColumns1);
+    //console.log(tempColumns2);
+
+    for (var i = 0; i < data[0].length; i++) {
+        if (data[0][i] !== undefined) {
+            if (data[0][i].toLowerCase() === "assessments") {
+                startIndex = i;
+                flag = 1;
+            } else {
+                if (flag === 1) {
+                    endIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    //console.log(startIndex);
+    //console.log(endIndex);
+
+    indexes.push(startIndex);
+    indexes.push(endIndex);
+
 }
 
 
@@ -264,7 +314,7 @@ function getStudentsObjects() {
 
     // Iterating from second row since first row contains headings
     // For each students...
-    for (var i = 1; i < noOfRows; i++) {
+    for (var i = 2; i < noOfRows; i++) {
         // Creating required variables which will be used while creating objects
         var studentId, studentName, studentEmail;
         var subjectName, subjectMarks, subjectAttempts, subjectStatus;
@@ -284,6 +334,10 @@ function getStudentsObjects() {
                 studentEmail = sheetData[i][j];
             else            // col:3 to ...  - subjects
             {
+                if (j < indexes[0] || j >= indexes[1])
+                    continue;
+
+
                 subjectName = headings[temp1++];     // subject name
                 subjectMarks = sheetData[i][j];     // subject marks
                 j++;
@@ -309,8 +363,8 @@ function getStudentsObjects() {
             // getting subject object
             var subject = studentMarks[k];
 
-            // if its a last column then its subjective type
-            if (k == studentMarks.length - 1) {
+            // if its a  subjective type
+            if (subject.subjectName.toLowerCase("subjective")) {
                 if (subject.subjectStatus == 'FAIL') {
                     subjectiveStatus = "FAIL";
                     break;
@@ -325,7 +379,7 @@ function getStudentsObjects() {
                 }
 
             }
-            else    // if its not a last column then its objective type
+            else    // if its a  objective type
             {
                 if (subject.subjectStatus == 'FAIL') {
                     objectiveStatus = "FAIL";
@@ -376,7 +430,7 @@ function getStudentsObjects() {
                 var subject = studentMarks[k];
 
                 // then its subjective
-                if (k == studentMarks.length - 1) {
+                if (subject.subjectName.toLowerCase("subjective")) {
                     subMarks = subject.subjectMarks;
                 }
                 else // then its objective
@@ -424,7 +478,7 @@ function prepareHTMLTable() {
     document.getElementById("subjectsArea").style.display = "none";
     document.getElementById("sheetInputArea").style.display = "none";
 
-    
+
     //creating HTML table based on the result of students data
     //Table start
     var tableStart = `<table class="table" id="htmlResultTable">`;
@@ -435,12 +489,12 @@ function prepareHTMLTable() {
     // Openinig row
     var tableHeadings = `<tr>`;
     for (var i = 0; i < headings.length; i++) {
-        if(i<3)
+        if (i < 3)
             tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
         else
-            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i-3]}</th>`;
+            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i - 3]}</th>`;
     }
-    
+
     // Objective status
     tableHeadings = tableHeadings + `<th>Objective Status</th>`;
     // Subjective status
@@ -458,14 +512,14 @@ function prepareHTMLTable() {
     // table rows 
     // All students data
     var tableRows = ``;
-    for(var i=0; i<students.length; i++){
+    for (var i = 0; i < students.length; i++) {
         // creating row tag based on status of the student
         var tempRow = ``;
-        if(students[i].finalStatus === 'PASS')
+        if (students[i].finalStatus === 'PASS')
             tempRow = tempRow + `<tr class="passRow">`;
-        else if(students[i].finalStatus === 'FAILED')
+        else if (students[i].finalStatus === 'FAILED')
             tempRow = tempRow + `<tr class="failRow">`;
-        else if(students[i].finalStatus === 'PENDING')
+        else if (students[i].finalStatus === 'PENDING')
             tempRow = tempRow + `<tr class="pendingRow">`;
         else
             tempRow = tempRow + `<tr class="notAppearedRow">`;
@@ -480,7 +534,7 @@ function prepareHTMLTable() {
         tempRow = tempRow + `<td>${students[i].studentEmail}</td>`;
 
         // 4.Student marks and attempts for each Subject (Adding dynamically through looping subjects array from student object)
-        for(var j=0; j<students[i].studentMarks.length; j++){
+        for (var j = 0; j < students[i].studentMarks.length; j++) {
             tempRow = tempRow + `<td>
                                     ${students[i].studentMarks[j].subjectMarks}
                                     -
@@ -521,7 +575,7 @@ function prepareHTMLTable() {
 
 
     // Downloading excelfile using event listner
-    document.getElementById("downloadExcel").addEventListener("click", function(){
+    document.getElementById("downloadExcel").addEventListener("click", function () {
         downloadExcelFile();
     });
 
@@ -529,81 +583,81 @@ function prepareHTMLTable() {
 
 
 
-// Show serch Area
-function showSearchArea(){
-    // showing serch input area
+// Show search Area
+function showSearchArea() {
+    // showing search input area
     document.getElementById("searchInputhArea").style.display = 'flex';
 
     // variable for type of search
-    var serchField = 1;
+    var searchField = 1;
 
-    // Accessing serch selection
+    // Accessing search selection
     const searchSelection = document.getElementById("searchSelection");
 
-    // Adding event handlers to select serch type
+    // Adding event handlers to select search type
     searchSelection.addEventListener("change", () => {
-        serchField = searchSelection.value;
-        //console.log(serchField);
+        searchField = searchSelection.value;
+        //console.log(searchField);
     });
 
-    // Accessing serch value
+    // Accessing search value
     const searchInput = document.getElementById("searchInput");
 
-    // serch data
+    // search data
     var searchData = '';
 
-    // Adding event handler to serch value
+    // Adding event handler to search value
     searchInput.addEventListener("input", () => {
         searchData = searchInput.value;
-        sortStudentData(serchField, searchData);
+        sortStudentData(searchField, searchData);
     });
 
-    // Accessing serch btn
-    const serchBtn = document.getElementById("serchBtn");
+    // Accessing search btn
+    const searchBtn = document.getElementById("searchBtn");
 
-    // adding event handler to serch btn
-    serchBtn.addEventListener("click", () => {
-        sortStudentData(serchField, searchData.toLowerCase());
+    // adding event handler to search btn
+    searchBtn.addEventListener("click", () => {
+        sortStudentData(searchField, searchData.toLowerCase());
     });
 
-    
+
 }
 
-// Sorting students data to show in serch result
-function sortStudentData(field, data){
-    if(data === '')
-        prepareHTMLSerchTable([]);
+// Sorting students data to show in search result
+function sortStudentData(field, data) {
+    if (data === '')
+        prepareHTMLSearchTable([]);
 
     var tempStudents = [];
-    for(var i=0; i<students.length; i++){
-        if(field == 1){
+    for (var i = 0; i < students.length; i++) {
+        if (field == 1) {
             var tempData = students[i].studentId;
-            if(tempData == data)
+            if (tempData == data)
                 tempStudents.push(students[i]);
         }
-        else if(field == 2){
+        else if (field == 2) {
             var tempData = students[i].studentName.toLowerCase();
-            if(tempData.includes(data))
+            if (tempData.includes(data))
                 tempStudents.push(students[i]);
         }
-        else{
+        else {
             var tempData = students[i].studentEmail.toLowerCase();
-            if(tempData.includes(data))
+            if (tempData.includes(data))
                 tempStudents.push(students[i]);
         }
     }
 
     //console.log(tempStudents);
-    prepareHTMLSerchTable(tempStudents);
+    prepareHTMLSearchTable(tempStudents);
 }
 
 
-// preparing html tbale for serch result
-function prepareHTMLSerchTable(serchStudents) {
-    //console.log(serchStudents);
+// preparing html tbale for search result
+function prepareHTMLSearchTable(searchStudents) {
+    //console.log(searchStudents);
     //creating HTML table based on the result of students data
     //Table start
-    var tableDivHeading = '<p>Serch Result:</p>';
+    var tableDivHeading = '<p>Search Result:</p>';
     var tableStart = `<table class="table" id="htmlSearchTable">`;
 
 
@@ -612,12 +666,12 @@ function prepareHTMLSerchTable(serchStudents) {
     // Openinig row
     var tableHeadings = `<tr>`;
     for (var i = 0; i < headings.length; i++) {
-        if(i<3)
+        if (i < 3)
             tableHeadings = tableHeadings + `<th>${headings[i]}</th>`;
         else
-            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i-3]}</th>`;
+            tableHeadings = tableHeadings + `<th>${headings[i]} <br> ${passMarks[i - 3]}</th>`;
     }
-    
+
     // Objective status
     tableHeadings = tableHeadings + `<th>Objective Status</th>`;
     // Subjective status
@@ -635,14 +689,14 @@ function prepareHTMLSerchTable(serchStudents) {
     // table rows 
     // All students data
     var tableRows = ``;
-    for(var i=0; i<serchStudents.length; i++){
+    for (var i = 0; i < searchStudents.length; i++) {
         // creating row tag based on status of the student
         var tempRow = ``;
-        if(serchStudents[i].finalStatus === 'PASS')
+        if (searchStudents[i].finalStatus === 'PASS')
             tempRow = tempRow + `<tr class="passRow">`;
-        else if(serchStudents[i].finalStatus === 'FAILED')
+        else if (searchStudents[i].finalStatus === 'FAILED')
             tempRow = tempRow + `<tr class="failRow">`;
-        else if(serchStudents[i].finalStatus === 'PENDING')
+        else if (searchStudents[i].finalStatus === 'PENDING')
             tempRow = tempRow + `<tr class="pendingRow">`;
         else
             tempRow = tempRow + `<tr class="notAppearedRow">`;
@@ -650,32 +704,32 @@ function prepareHTMLSerchTable(serchStudents) {
 
         // creating col tags for student data
         // 1.Student ID
-        tempRow = tempRow + `<td>${serchStudents[i].studentId}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].studentId}</td>`;
         // 2.Student Name
-        tempRow = tempRow + `<td>${serchStudents[i].studentName}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].studentName}</td>`;
         // 3.Student Email
-        tempRow = tempRow + `<td>${serchStudents[i].studentEmail}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].studentEmail}</td>`;
 
         // 4.Student marks and attempts for each Subject (Adding dynamically through looping subjects array from student object)
-        for(var j=0; j<serchStudents[i].studentMarks.length; j++){
+        for (var j = 0; j < searchStudents[i].studentMarks.length; j++) {
             tempRow = tempRow + `<td>
-                                    ${serchStudents[i].studentMarks[j].subjectMarks}
+                                    ${searchStudents[i].studentMarks[j].subjectMarks}
                                     -
-                                    ${serchStudents[i].studentMarks[j].subjectAttempts}
+                                    ${searchStudents[i].studentMarks[j].subjectAttempts}
                                 </td>`;
         }
 
         // 5.Student Objective Status
-        tempRow = tempRow + `<td>${serchStudents[i].objectiveStatus}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].objectiveStatus}</td>`;
 
         // 6.Student Subjective Status
-        tempRow = tempRow + `<td>${serchStudents[i].subjectiveStatus}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].subjectiveStatus}</td>`;
 
         // 7.Student Final Status
-        tempRow = tempRow + `<td>${serchStudents[i].finalStatus}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].finalStatus}</td>`;
 
         // 7.Student Final Marks
-        tempRow = tempRow + `<td>${serchStudents[i].finalMarks}</td>`;
+        tempRow = tempRow + `<td>${searchStudents[i].finalMarks}</td>`;
 
         // closing row tag
         tempRow = tempRow + '</tr>';
@@ -689,23 +743,23 @@ function prepareHTMLSerchTable(serchStudents) {
     // table end
     var tableEnd = `</table>`;
 
-    if(serchStudents.length <= 0 || serchStudents.length == students.length) {
+    if (searchStudents.length <= 0 || searchStudents.length == students.length) {
         // Adding table to HTML page
         document.getElementById("searchResultArea").style.display = "none";
     }
-    else{
+    else {
         // Adding table to HTML page
         document.getElementById("searchResultArea").style.display = "block";
         document.getElementById("searchResultArea").innerHTML = tableDivHeading + tableStart + tableHeadings + tableRows + tableEnd;
         document.getElementById("searchResultArea").style.overflow = 'scroll';
     }
-    
+
 }
 
 
 // Downloading excelfile
-function downloadExcelFile(){
-    
+function downloadExcelFile() {
+
     function html_table_to_excel(type) {
         var data = document.getElementById('htmlResultTable');
 

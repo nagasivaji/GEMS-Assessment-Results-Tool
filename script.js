@@ -354,17 +354,21 @@ function getStudentsObjects() {
             }
         }
 
+        //console.log(studentMarks);
+
         // required varibale for students status
-        var objectiveStatus = "PASS", subjectiveStatus = "PASS";
+        var objectiveStatus = "NOT APPEARED", subjectiveStatus = "NOT APPEARED";
 
         // Iterating through  students sbjets array
         for (var k = 0; k < studentMarks.length; k++) {
 
             // getting subject object
             var subject = studentMarks[k];
+            //console.log(subject);
+            //console.log(subject.subjectName.toLowerCase("subjective"));
 
             // if its a  subjective type
-            if (subject.subjectName.toLowerCase("subjective")) {
+            if (subject.subjectName.toLowerCase().includes("subjective")) {
                 if (subject.subjectStatus == 'FAIL') {
                     subjectiveStatus = "FAIL";
                     break;
@@ -374,13 +378,14 @@ function getStudentsObjects() {
                     subjectiveStatus = "PENDING";
                 }
 
-                if (subject.subjectStatus == 'NA') {
-                    subjectiveStatus = "NOT APPEARED";
+                if (subject.subjectStatus == 'PASS') {
+                    subjectiveStatus = "PASS";
                 }
 
             }
             else    // if its a  objective type
             {
+                //console.log(subject);
                 if (subject.subjectStatus == 'FAIL') {
                     objectiveStatus = "FAIL";
                     break;
@@ -390,8 +395,8 @@ function getStudentsObjects() {
                     objectiveStatus = "PENDING";
                 }
 
-                if (subject.subjectStatus == 'NA') {
-                    objectiveStatus = "NOT APPEARED";
+                if (subject.subjectStatus == 'PASS') {
+                    objectiveStatus = "PASS";
                 }
 
             }
@@ -429,8 +434,12 @@ function getStudentsObjects() {
                 // getting subject object
                 var subject = studentMarks[k];
 
+                // Neglecting the subject if its has passmark zero
+                if(subject.subjectMarks === 0)
+                    continue;
+
                 // then its subjective
-                if (subject.subjectName.toLowerCase("subjective")) {
+                if (subject.subjectName.toLowerCase().includes("subjective")) {
                     subMarks = subject.subjectMarks;
                 }
                 else // then its objective
@@ -443,7 +452,7 @@ function getStudentsObjects() {
             finalMarks = Math.round(finalMarks);
         }
 
-
+        
 
 
         // creating new studemt object

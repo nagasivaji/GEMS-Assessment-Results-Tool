@@ -354,21 +354,17 @@ function getStudentsObjects() {
             }
         }
 
-        //console.log(studentMarks);
-
         // required varibale for students status
-        var objectiveStatus = "NOT APPEARED", subjectiveStatus = "NOT APPEARED";
+        var objectiveStatus = "PASS", subjectiveStatus = "PASS";
 
         // Iterating through  students sbjets array
         for (var k = 0; k < studentMarks.length; k++) {
 
             // getting subject object
             var subject = studentMarks[k];
-            //console.log(subject);
-            //console.log(subject.subjectName.toLowerCase("subjective"));
 
             // if its a  subjective type
-            if (subject.subjectName.toLowerCase().includes("subjective")) {
+            if (subject.subjectName.toLowerCase("subjective")) {
                 if (subject.subjectStatus == 'FAIL') {
                     subjectiveStatus = "FAIL";
                     break;
@@ -378,14 +374,13 @@ function getStudentsObjects() {
                     subjectiveStatus = "PENDING";
                 }
 
-                if (subject.subjectStatus == 'PASS') {
-                    subjectiveStatus = "PASS";
+                if (subject.subjectStatus == 'NA') {
+                    subjectiveStatus = "NOT APPEARED";
                 }
 
             }
             else    // if its a  objective type
             {
-                //console.log(subject);
                 if (subject.subjectStatus == 'FAIL') {
                     objectiveStatus = "FAIL";
                     break;
@@ -395,8 +390,8 @@ function getStudentsObjects() {
                     objectiveStatus = "PENDING";
                 }
 
-                if (subject.subjectStatus == 'PASS') {
-                    objectiveStatus = "PASS";
+                if (subject.subjectStatus == 'NA') {
+                    objectiveStatus = "NOT APPEARED";
                 }
 
             }
